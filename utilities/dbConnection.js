@@ -3,13 +3,6 @@ const mysql2 = require('mysql2/promise');
 
 // --- option 1 - creating connection pooling
 const dbConnection = mysql2.createPool({
-    // host: "103.3.173.137",
-    // user: "looksee",
-    // password: "return2626",
-    // database: "schedulerdb",
-    // multipleStatements: true,
-    // waitForConnections: true,
-    //
     host: "sql12.freemysqlhosting.net",
     user: "sql12643795",
     password: "y7UDUhual4",
