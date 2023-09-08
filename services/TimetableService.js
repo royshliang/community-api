@@ -71,6 +71,9 @@ const TimetableService = {
     update: async function(req, res, next) {
         let model = req.body;
 
+        model.classStart = model.classStart.toString().split('T')[1]
+        model.classEnd = model.classEnd.toString().split('T')[1]
+
         await dbConn.execute(`update timetables set class_day=${model.classDay}, class_start='${model.classStart}', class_end='${model.classEnd}' 
                                     where id = ${model.id}`)
             .then((data) => {
@@ -82,6 +85,9 @@ const TimetableService = {
     },
     insert: async function(req, res, next) {
         let model = req.body;
+
+        model.classStart = model.classStart.toString().split('T')[1]
+        model.classEnd = model.classEnd.toString().split('T')[1]
 
         await dbConn.execute(`insert timetables (subject_id, class_day, class_start, class_end) 
                                     values (${model.subjectId}, ${model.classDay}, '${model.classStart}', '${model.classEnd}')`)
