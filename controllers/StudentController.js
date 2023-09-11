@@ -18,5 +18,8 @@ router.route("/student")
     .put(StudentService.update)
     .post(StudentService.insert)
 
+router.route("/student/validate")
+    .post(StudentService.upsert)
+
 
 module.exports = router;

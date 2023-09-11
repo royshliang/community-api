@@ -1,13 +1,12 @@
 // --- 1
-const admin = require('firebase-admin')
+const fbAdmin = require('firebase-admin')
+var serviceAccount = require('./../secret_key.json');  // fb admin secret key in json file
 
-var serviceAccount = require('./secret_key.json');
-
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+fbAdmin.initializeApp({
+    credential: fbAdmin.credential.cert(serviceAccount)
 });
 
-const messaging = admin.messaging();
+const messaging = fbAdmin.messaging();
 
 const Messaging = {
     // ---- 1 by tokens
@@ -17,30 +16,23 @@ const Messaging = {
             token: token
         } 
 
-        admin.messaging().send(payload)
-            .then(response => {
-                return true;
-            })
-            .catch(err => {
-                return err.message;
-            });
+        try {
+            fbAdmin.messaging().send(payload)
+                .then(response => {
+                    return true;
+                })
+                .catch(err => {
+                    return err.message;
+                });
+        }
+        catch(err) {
+        }
     },
     // --- 2 by topics
     subscribeToTopic: function(topic, token) {
 
     },
     sendByTopic: function(topic, title, mesg) {
-        let payload = { 
-            notification : { title : title, body : msg }
-        } 
-
-        admin.messaging().sendByTopic(topic, payload)
-            .then(response => {
-                return true;
-            })
-            .catch(err => {
-                return error.message;
-            });
     }
 }
 

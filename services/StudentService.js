@@ -2,7 +2,7 @@ const dbConn = require('../utilities/dbConnection')
 
 const StudentService = {
     getAll: async function(req, res, next) {
-        await dbConn.query(`select * from student`)
+        await dbConn.query(`select * from students`)
             .then(result => {
                 res.json(result[0]);
             })
@@ -13,7 +13,7 @@ const StudentService = {
     getById: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`select * from student where id = ${id}`)
+        await dbConn.query(`select * from students where id = ${id} `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -24,7 +24,7 @@ const StudentService = {
     getByEmail: async function(req, res, next) {
         let email = req.params.id;
 
-        await dbConn.query(`select * from student where email = '${email}'`)
+        await dbConn.query(`select * from students where email = '${email}' `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -35,7 +35,7 @@ const StudentService = {
     getByToken: async function(req, res, next) {
         let token = req.params.token;
 
-        await dbConn.query(`select * from student where token = '${token}`)
+        await dbConn.query(`select * from students where token = '${token}' `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -46,9 +46,9 @@ const StudentService = {
     update: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update student set name='${model.name}', email='${model.email}', token='${model.token}', status=${model.status} where id = ${model.id}`)
-            .then(([data, fields]) => {
-                res.json(data.changedRows);
+        await dbConn.execute(`update students set email='${model.email}', token='${model.token}' where id = ${model.id}`)
+            .then(result => {
+                res.json(result[0].changedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
@@ -57,12 +57,40 @@ const StudentService = {
     insert: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`insert into student (name, email, token) values ('${model.name}', '${model.email}', '${model.token}')`)
-            .then(([data, fields]) => {
-                res.json(data.affectedRows);
+        await dbConn.execute(`insert into students (email, token) values ('${model.email}', '${model.token}') `)
+            .then((result) => {
+                res.json(result[0].affectedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
+            })
+    },
+    upsert: async function(req, res, next) {
+        let model = req.body;
+
+        await dbConn.query(`select * from students where email = '${model.email}' `)
+            .then(async ([data, fields]) => {
+                if(data.length == 0) {
+                    await dbConn.execute(`insert into students (email, token) values ('${model.email}', '${model.token}') `)
+                        .then(result => {
+                            res.json(result[0].affectedRows)
+                        })
+                        .catch(err => {
+                            res.status(500).json(err.message);
+                        })
+                }
+                else {
+                    await dbConn.execute(`update students set token = '${model.token}' where email = '${model.email}' `)
+                        .then(result => {
+                            return res.json(result[0].updatedRows)
+                        })
+                        .catch(err => {
+                            res.status(500).json(err.message);
+                        })
+                }
+            })
+            .catch(err => {
+                throw err
             })
     }
 }
