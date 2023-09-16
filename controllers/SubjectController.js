@@ -12,11 +12,11 @@ router.route("/subject/id/:id")
 router.route("/subjects/course/id/:id")
     .get(SubjectService.getByCourse);
 
+router.route("/subject/mark")
+    .put(SubjectService.mark)
 router.route("/subject")
     .put(SubjectService.update)
     .post(SubjectService.insert)
-
-
 
 
 module.exports = router;

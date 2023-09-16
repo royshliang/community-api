@@ -2,9 +2,9 @@ const dbConn = require('../utilities/dbConnection')
 
 const CourseService = {
     getAll: async function(req, res, next) {
-        await dbConn.query(`select id as id, course_name as courseName from courses`)
+        await dbConn.query(`select id as id, code as code, course_name as courseName, status as status from courses`)
             .then(([data, fields]) => {
-              res.json(data);
+                res.json(data);
             })
             .catch(err => {
                 res.status(500).json(err.message);
@@ -21,10 +21,10 @@ const CourseService = {
                 res.status(500).json(err.message);
             })
     },
-    update: async function(req, res, next) {
+    mark: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set code = '${model.code}', course_name = '${model.courseName}', status = ${model.status} where id = ${model.id}`)
+        await dbConn.execute(`update courses set status = ${model.status} where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
@@ -32,11 +32,10 @@ const CourseService = {
                 res.status(500).json(err.message);
             })
     },
-    // --- can use the update methods instead
-    mark: async function(req, res, next) {
+    update: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set status = ${model.status} where id = ${model.id}`)
+        await dbConn.execute(`update courses set code = '${model.code}', course_name = '${model.courseName}' where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
