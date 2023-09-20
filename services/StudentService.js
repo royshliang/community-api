@@ -1,8 +1,10 @@
 const dbConn = require('../utilities/dbConnection')
 
+const sql = `select id, email, token from students`
+
 const StudentService = {
     getAll: async function(req, res, next) {
-        await dbConn.query(`select * from students`)
+        await dbConn.query(`${sql}`)
             .then(result => {
                 res.json(result[0]);
             })
@@ -13,7 +15,7 @@ const StudentService = {
     getById: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`select * from students where id = ${id} `)
+        await dbConn.query(`${sql} where id = ${id} `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -24,7 +26,7 @@ const StudentService = {
     getByEmail: async function(req, res, next) {
         let email = req.params.id;
 
-        await dbConn.query(`select * from students where email = '${email}' `)
+        await dbConn.query(`${sql} where email = '${email}' `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -35,7 +37,7 @@ const StudentService = {
     getByToken: async function(req, res, next) {
         let token = req.params.token;
 
-        await dbConn.query(`select * from students where token = '${token}' `)
+        await dbConn.query(`${sql} where token = '${token}' `)
             .then(([data, fields]) => {
                 res.json(data);
             })

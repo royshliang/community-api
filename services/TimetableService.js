@@ -1,12 +1,16 @@
 const dbConn = require('../utilities/dbConnection')
 
+const sql = `select t1.id AS id, t1.subject_id as subjectId, t1.location_id as locationId, t1.status as status, t2.code as subjectCode, t2.subject_name AS subjectName, t2.color as color,
+                t2.course_id as courseId, t3.code as courseCode, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration,
+                t4.code as locationCode, t4.description as locationDescription 
+                from timetable t1
+                    left join subjects t2 ON t1.subject_id = t2.id
+                    left join courses t3 ON t2.course_id = t3.id
+                    left join locations t4 on t1.location_id = t4.id`;
+
 const TimetableService = {
     getAll: async function(req, res, next) {
-        await dbConn.query(`select t1.id AS id, t1.subject_id as subjectId, t2.code as subjectCode, t2.subject_name AS subjectName, 
-                                t2.course_id as courseId, t3.code as courseCode, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration
-                                from timetable t1
-                                    left join subjects t2 ON t1.subject_id = t2.id
-                                    left join courses t3 ON t2.course_id = t3.id`)
+        await dbConn.query(`${sql}`)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -17,10 +21,7 @@ const TimetableService = {
     getById: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`select t1.id AS id, t2.subject_name AS subjectName, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration
-                                from timetable t1
-                                    left join subjects t2 ON t1.subject_id = t2.id
-                                    left join courses t3 ON t2.course_id = t3.id where t1.id = ${id}`)
+        await dbConn.query(`${sql} where t1.id = ${id}`)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -31,10 +32,7 @@ const TimetableService = {
     getBySubjectId: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`select t1.id AS id, t2.subject_name AS subjectName, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration
-                                from timetable t1
-                                    left join subjects t2 ON t1.subject_id = t2.id
-                                    left join courses t3 ON t2.course_id = t3.id WHERE t1.subject_id = ${id}`)
+        await dbConn.query(`${sql} WHERE t1.subject_id = ${id}`)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -45,10 +43,7 @@ const TimetableService = {
     getByCourseId: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`select t1.id AS id, t2.subject_name AS subjectName, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration
-                                from timetable t1
-                                    left join subjects t2 ON t1.subject_id = t2.id
-                                    left join courses t3 ON t2.course_id = t3.id where t2.course_id = '${id}'`)
+        await dbConn.query(`${sql} where t2.course_id = '${id}'`)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -75,7 +70,7 @@ const TimetableService = {
         model.startTime = model.classStart.toString().split('T')[1]
         model.classEnd = model.classEnd.toString().split('T')[1]
 
-        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}' 
+        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}', location_id='${model.locationId} 
                                     where id = ${model.id}`)
             .then((data) => {
                 res.json(data.changedRows);
@@ -90,8 +85,8 @@ const TimetableService = {
         model.startTime = model.startTime.toString().split('T')[1]
         model.endTime = model.endTime.toString().split('T')[1]
 
-        await dbConn.execute(`insert timetable (subject_id, class_day, start_time, end_time) 
-                                    values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}')`)
+        await dbConn.execute(`insert timetable (subject_id, class_day, start_time, end_time, location_id) 
+                                    values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}', ${model.locationId})`)
             .then(data => {
                 res.json(data);
             })

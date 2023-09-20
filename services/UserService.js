@@ -1,8 +1,8 @@
 const dbConn = require('../utilities/dbConnection')
 
-const sql = `select id as id, code as code, course_name as courseName, status as status from courses`
+const sql = `select id, name, email, password, status from users`
 
-const CourseService = {
+const UserService = {
     getAll: async function(req, res, next) {
         await dbConn.query(`${sql}`)
             .then(([data, fields]) => {
@@ -26,7 +26,7 @@ const CourseService = {
     mark: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set status = ${model.status} where id = ${model.id}`)
+        await dbConn.execute(`update users set status = ${model.status} where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
@@ -37,7 +37,7 @@ const CourseService = {
     update: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set code = '${model.code}', course_name = '${model.courseName}' where id = ${model.id}`)
+        await dbConn.execute(`update users set name = '${model.name}', email = '${model.email}', password = '${model.password}' where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
@@ -48,14 +48,25 @@ const CourseService = {
     insert: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`insert courses (code, course_name) values ('${model.code}', '${model.courseName}') `)
+        await dbConn.execute(`insert users (name, email, password) values ('${model.name}', '${model.email}', '${model.password}') `)
             .then(result => {
                 res.json(result[0].affectedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
             })
+    },
+    authenticate: async function(req, res, next) {
+        let model = req.body;
+
+        await dbConn.execute(`${sql} where email = '${model.email}' and password = '${model.password}' and status = 1 `)
+            .then(([data, fields]) => {
+                res.json(data[0]);
+            })  
+            .catch(err => {
+                res.status(500).json(err.message);
+            })
     }
 }
 
-module.exports = CourseService;
+module.exports = UserService;

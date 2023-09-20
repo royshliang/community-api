@@ -1,8 +1,8 @@
 const dbConn = require('../utilities/dbConnection')
 
-const sql = `select id as id, code as code, course_name as courseName, status as status from courses`
+const sql = `select id, code, description, status from locations`
 
-const CourseService = {
+const LocationService = {
     getAll: async function(req, res, next) {
         await dbConn.query(`${sql}`)
             .then(([data, fields]) => {
@@ -26,7 +26,7 @@ const CourseService = {
     mark: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set status = ${model.status} where id = ${model.id}`)
+        await dbConn.execute(`update locations set status = ${model.status} where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
@@ -37,7 +37,7 @@ const CourseService = {
     update: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`update courses set code = '${model.code}', course_name = '${model.courseName}' where id = ${model.id}`)
+        await dbConn.execute(`update locations set code = '${model.code}', description = '${model.description}' where id = ${model.id}`)
             .then(result => {
                 res.json(result[0].changedRows);
             })
@@ -48,7 +48,7 @@ const CourseService = {
     insert: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`insert courses (code, course_name) values ('${model.code}', '${model.courseName}') `)
+        await dbConn.execute(`insert locations (code, description) values ('${model.code}', '${model.description}') `)
             .then(result => {
                 res.json(result[0].affectedRows);
             })
@@ -58,4 +58,4 @@ const CourseService = {
     }
 }
 
-module.exports = CourseService;
+module.exports = LocationService;
