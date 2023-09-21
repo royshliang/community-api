@@ -41,7 +41,7 @@ const AttendenceService = {
     insert: async function(req, res, next) {
         let model = req.body;
 
-        await dbConn.execute(`insert attendences (student_id, subject_id) values ('${model.studentId}', '${model.subjectId}') `)
+        await dbConn.execute(`insert attendances (student_id, subject_id) select id, ${model.subjectId} from students where email='${model.email}' `)
             .then(result => {
                 res.json(result[0].affectedRows);
             })

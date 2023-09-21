@@ -10,7 +10,7 @@ router.route("/attendence/id/:id")
     .get(AttendenceService.getById)
 
 
-router.route("/course")
+router.route("/attendance")
     // .put(CourseService.update)
     .post(AttendenceService.insert)
 

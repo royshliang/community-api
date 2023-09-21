@@ -84,7 +84,7 @@ const StudentService = {
                 else {
                     await dbConn.execute(`update students set token = '${model.token}' where email = '${model.email}' `)
                         .then(result => {
-                            return res.json(result[0].updatedRows)
+                            return res.json(result[0].changedRows || result[0].affectedRows)
                         })
                         .catch(err => {
                             res.status(500).json(err.message);
