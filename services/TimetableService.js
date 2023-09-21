@@ -43,7 +43,7 @@ const TimetableService = {
     getByCourseId: async function(req, res, next) {
         let id = req.params.id;
 
-        await dbConn.query(`${sql} where t2.course_id = '${id}'`)
+        await dbConn.query(`${sql} where t2.course_id = '${id}' order by t1.start_time `)
             .then(([data, fields]) => {
                 res.json(data);
             })
@@ -57,8 +57,8 @@ const TimetableService = {
         let status = req.params.status;
 
         await dbConn.execute(`update timetable set status = ${status} where id = ${id}`)
-            .then((data) => {
-                res.json(data.changedRows);
+            .then(result => {
+                res.json(result[0].changedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
@@ -67,13 +67,13 @@ const TimetableService = {
     update: async function(req, res, next) {
         let model = req.body;
 
-        model.startTime = model.classStart.toString().split('T')[1]
-        model.classEnd = model.classEnd.toString().split('T')[1]
+        model.startTime = model.startTime.toString().split('T')[1]
+        model.endTime = model.endTime.toString().split('T')[1]
 
-        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}', location_id='${model.locationId} 
+        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}' 
                                     where id = ${model.id}`)
-            .then((data) => {
-                res.json(data.changedRows);
+            .then(result => {
+                res.json(result[0].changedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
@@ -87,8 +87,8 @@ const TimetableService = {
 
         await dbConn.execute(`insert timetable (subject_id, class_day, start_time, end_time, location_id) 
                                     values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}', ${model.locationId})`)
-            .then(data => {
-                res.json(data);
+            .then(result => {
+                res.json(result[0].affectedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
@@ -98,8 +98,8 @@ const TimetableService = {
         let model = req.body;
 
         await dbConn.execute(`delete from timetable where id = ${model.id}`)
-            .then(data => {
-                res.json(data);
+            .then(result => {
+                res.json(result[0].affectedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
