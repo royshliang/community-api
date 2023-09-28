@@ -1,4 +1,5 @@
 const dbConn = require('../utilities/dbConnection')
+const notificationService = require('./NotificationService')
 
 const sql = `select t1.id AS id, t1.subject_id as subjectId, t1.location_id as locationId, t1.status as status, t2.code as subjectCode, t2.subject_name AS subjectName, t2.color as color,
                 t2.course_id as courseId, t3.code as courseCode, t3.course_name AS courseName, t1.class_day AS classDay, t1.start_time AS startTime, t1.end_time AS endTime, TIMEDIFF(end_time, start_time) AS duration,
@@ -70,9 +71,12 @@ const TimetableService = {
         model.startTime = model.startTime.toString().split('T')[1]
         model.endTime = model.endTime.toString().split('T')[1]
 
+
         await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}' 
                                     where id = ${model.id}`)
             .then(result => {
+                // --- notifications ****
+                notificationService.notifyAll("Timetable Changes", `${model.subjectName} has been moved to ${model.classDay} ${model.startTime}`)
                 res.json(result[0].changedRows);
             })
             .catch(err => {
@@ -88,6 +92,8 @@ const TimetableService = {
         await dbConn.execute(`insert timetable (subject_id, class_day, start_time, end_time, location_id) 
                                     values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}', ${model.locationId})`)
             .then(result => {
+                // --- notifications ****
+                notificationService.notifyAll("Timetable Additions", `New class ${model.subjectName} on ${model.classDay} ${model.startTime}`)
                 res.json(result[0].affectedRows);
             })
             .catch(err => {
@@ -99,6 +105,8 @@ const TimetableService = {
 
         await dbConn.execute(`delete from timetable where id = ${model.id}`)
             .then(result => {
+                // --- notifications ****
+                notificationService.notifyAll("Timetable Removal", `Hoooray ${model.subjectName} on ${model.classDay} ${model.startTime} removed`)
                 res.json(result[0].affectedRows);
             })
             .catch(err => {

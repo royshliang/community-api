@@ -1,4 +1,5 @@
 const dbConn = require('../utilities/dbConnection')
+const notificationService = require('./NotificationService')
 
 const sql = `select id as id, code as code, course_name as courseName, status as status from courses`
 
@@ -28,6 +29,7 @@ const CourseService = {
 
         await dbConn.execute(`update courses set status = ${model.status} where id = ${model.id}`)
             .then(result => {
+                //notificationService.notifyAll("Courses Marked", "There is a change in the course, please check !!!")
                 res.json(result[0].changedRows);
             })
             .catch(err => {

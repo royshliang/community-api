@@ -6,13 +6,12 @@ const router = express.Router();
 
 router.route("/attendencs")
     .get(AttendenceService.getAll)
+router.route("/attendances/subject/:id")
+    .get(AttendenceService.getBySubject)
 router.route("/attendence/id/:id")
     .get(AttendenceService.getById)
 
-
 router.route("/attendance")
-    // .put(CourseService.update)
     .post(AttendenceService.insert)
-
 
 module.exports = router;

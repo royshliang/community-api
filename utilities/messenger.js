@@ -9,20 +9,7 @@ fbAdmin.initializeApp({
 // const messaging = fbAdmin.messaging();
 
 const Messenger = {
-    sendMultipleByToken: function(tokenList, title, msg) {
-        for(var i=0; i<tokenList.length;  i++) {
-            try {
-                this.sendByToken(tokenList[i], title, msg);
-            }
-            catch(err) {
-                throw err
-            }
-        }
-    },
-    sendByToken: function(token, title, msg) {
-        if(!token) token = "cb341eq0kSrpxFqVgr9CZ2:APA91bEFj74n1muFzUgxdu8xndgM8owwUNsexuFhwr6yns0atsg4VSVOWa90VA_W8DZxnvR688ko0NY3lJ0h4UKY8pNgJHflnl_1c2RxyckNMzTtXwPih1azCX5W4tiNXE-Lz5FkF6G-";
-        //if(!token) token = "fVBrXemNEtnQXAWyzBIdsM:APA91bFHKwZMT2m_5NrmZLV8PC_jngXnFAoGR2a64EZtwtlF0dqI4YgvkM1H1jsN37yp5g0pCU3hoXfjtFiXclBv4NPvSpm3ylX5hYHvJGKN4qfrt6TpEpKdpy-7cCuTmDOaG1vI9Msc";
-
+    sendByToken: function(token, title, msg) {        
         // --- prepare messaging payload
         let dataload = {
             "token": token,

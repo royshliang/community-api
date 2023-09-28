@@ -1,5 +1,4 @@
 const dbConn = require('../utilities/dbConnection')
-const messaging = require('../utilities/messenger')
 
 const sql = `select t1.id as subjectId, t1.code as subjectCode, t1.subject_name as subjectName, t1.color as color, t2.id as courseId, t2.code as courseCode, t2.course_name as courseName, t1.status as status  
                 from subjects t1 

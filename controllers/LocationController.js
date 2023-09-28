@@ -6,7 +6,6 @@ const router = express.Router();
 
 router.route("/locations")
     .get(LocationService.getAll)
-
 router.route("/location/id/:id")
     .get(LocationService.getById);
 

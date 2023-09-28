@@ -3,10 +3,10 @@ const Messenger = require('../utilities/messenger')
 
 const NotificationService = {   
     notifyAll: async function(title, msg) {
-        await dbConn.query(`select token from students where token != null`)
+        await dbConn.query(`select token from students where token is not null`)
             .then(([data, fields]) => {
                 for(var i=0; i<data.length; i++) {
-                    Messenger.sendByToken(data[i], title, msg)
+                    Messenger.sendByToken(data[i].token, title, msg)
                 }
             })
             .catch(err => {

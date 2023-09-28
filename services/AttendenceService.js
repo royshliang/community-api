@@ -9,12 +9,12 @@ const sql = `select t1.subject_id as sujectId, t3.subject_name as subjectName, t
 const AttendenceService = {
     getAll: async function(req, res, next) {
         await dbConn.query(`${sql}`)
-            .then(([data, fields]) => {
-                res.json(data);
-            })
-            .catch(err => {
-                res.status(500).json(err.message);
-            })
+        .then(([data, fields]) => {
+            res.json(data[0]);
+        })
+        .catch(err => {
+            res.status(500).json(err.message);
+        })
     },
     getById: async function(req, res, next) {
         let id = req.params.id;
@@ -27,17 +27,17 @@ const AttendenceService = {
                 res.status(500).json(err.message);
             })
     },
-    // update: async function(req, res, next) {
-    //     let model = req.body;
+    getBySubject: async function(req, res, next) {
+        let id = req.params.id;
 
-    //     await dbConn.execute(`update courses set code = '${model.code}', course_name = '${model.courseName}' where id = ${model.id}`)
-    //         .then(result => {
-    //             res.json(result[0].changedRows);
-    //         })
-    //         .catch(err => {
-    //             res.status(500).json(err.message);
-    //         })
-    // },
+        await dbConnection.query(`${sql} where t1.subject_id = ${id}`)
+            .then(([data, fields]) => {
+                res.json(data[0]);
+            })
+            .catch(err => {
+                res.status(500).json(err.message);
+            })
+    },
     insert: async function(req, res, next) {
         let model = req.body;
 
