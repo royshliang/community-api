@@ -76,7 +76,7 @@ const TimetableService = {
                                     where id = ${model.id}`)
             .then(result => {
                 // --- notifications ****
-                notificationService.notifyAll("Timetable Changes", `${model.subjectName} has been moved to ${model.classDay} ${model.startTime}`)
+                notificationService.notifyAll("Timetable Changes", `${model.subjectName} has been moved to ${convertDayName(model.classDay)} ${model.startTime}`)
                 res.json(result[0].changedRows);
             })
             .catch(err => {
@@ -93,7 +93,7 @@ const TimetableService = {
                                     values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}', ${model.locationId})`)
             .then(result => {
                 // --- notifications ****
-                notificationService.notifyAll("Timetable Additions", `New class ${model.subjectName} on ${model.classDay} ${model.startTime}`)
+                notificationService.notifyAll("Timetable Additions", `New class ${model.subjectName} on ${convertDayName(model.classDay)} ${model.startTime}`)
                 res.json(result[0].affectedRows);
             })
             .catch(err => {
@@ -106,12 +106,16 @@ const TimetableService = {
         await dbConn.execute(`delete from timetable where id = ${model.id}`)
             .then(result => {
                 // --- notifications ****
-                notificationService.notifyAll("Timetable Removal", `Hoooray ${model.subjectName} on ${model.classDay} ${model.startTime} removed`)
+                notificationService.notifyAll("Timetable Removal", `Hoooray ${model.subjectName} on ${convertDayName(model.classDay)} ${model.startTime} removed`)
                 res.json(result[0].affectedRows);
             })
             .catch(err => {
                 res.status(500).json(err.message);
             })
+    },
+    convertDayName: function(dayNum) {
+        const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+        return dayNames[dayNum - 1]
     }
 }
 
