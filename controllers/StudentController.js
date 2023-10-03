@@ -18,7 +18,7 @@ router.route("/student")
     .put(StudentService.update)
     .post(StudentService.insert)
 
-router.route("/student/authenticate")
+router.route("/student/register")
     .post(StudentService.upsert)
 
 

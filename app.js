@@ -5,6 +5,21 @@ var app = express();
 app.use(cors());
 app.use(express.json());
 
+const MongoClient = require('mongodb').MongoClient;
+const uri = "mongodb://127.0.0.1:27017/testdb?directConnection=true";
+// const client = new MongoClient(uri);
+
+MongoClient.connect(uri, err => {
+  if (err) {
+    console.error(err);
+    return;
+  }
+  console.log("Connected successfully to server");
+
+  // perform CRUD operations here
+
+  client.close();
+});
 
 // =================================================================================================================== //
 // --- setup controllers
