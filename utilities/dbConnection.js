@@ -15,8 +15,8 @@ const mysql2 = require('mysql2/promise');
 // 2. create an connection object to datase
 const dbConnection = mysql2.createPool({
     host: "103.3.173.137",
-    user: "root",
-    password: "returntoRL!",
+    user: "looksee",
+    password: "return2626!",
     database: "testdb",
 });
 // // 3. connect to database
