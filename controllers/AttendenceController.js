@@ -1,17 +1,17 @@
 const express = require('express')
-const AttendenceService = require('../services/AttendenceService')
+const AttendanceService = require('../services/AttendanceService')
 
 const router = express.Router();
 
 
-router.route("/attendencs")
-    .get(AttendenceService.getAll)
+router.route("/attendances")
+    .get(AttendanceService.getAll)
 router.route("/attendances/subject/:id")
-    .get(AttendenceService.getBySubject)
-router.route("/attendence/id/:id")
-    .get(AttendenceService.getById)
+    .get(AttendanceService.getBySubject)
+router.route("/attendance/id/:id")
+    .get(AttendanceService.getById)
 
 router.route("/attendance")
-    .post(AttendenceService.insert)
+    .post(AttendanceService.insert)
 
 module.exports = router;
