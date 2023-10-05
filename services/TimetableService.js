@@ -72,11 +72,11 @@ const TimetableService = {
         model.endTime = model.endTime.toString().split('T')[1]
 
 
-        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}' 
+        await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}', location_id = ${model.locationId}, subject_id = ${model.subjectId} 
                                     where id = ${model.id}`)
             .then(result => {
                 // --- notifications ****
-                notificationService.notifyAll("Timetable Changes", `${model.subjectName} has been moved to ${TimetableService.convertDayName(model.classDay)} ${model.startTime}`)
+                notificationService.notifyAll("Timetable Changes", `${model.subjectName} has been moved to ${TimetableService.convertDayName(model.classDay)} ${model.startTime} (Location ${model.locationCode})`)
                 res.json(result[0].changedRows);
             })
             .catch(err => {
@@ -91,9 +91,16 @@ const TimetableService = {
 
         await dbConn.execute(`insert timetable (subject_id, class_day, start_time, end_time, location_id) 
                                     values (${model.subjectId}, ${model.classDay}, '${model.startTime}', '${model.endTime}', ${model.locationId})`)
-            .then(result => {
+            .then(async (result) => {
+                //
+                let subjectName = '';
+                await dbConn.query(`select subject_name as subjectName from subjects where id = ${model.subjectId}`)
+                    .then(([data, fields]) => {
+                        subjectName = data[0].subjectName;
+                    })
+                    .catch(err => {})
                 // --- notifications ****
-                notificationService.notifyAll("Timetable Additions", `New class ${model.subjectName} on ${TimetableService.convertDayName(model.classDay)} ${model.startTime}`)
+                notificationService.notifyAll("Timetable Additions", `${subjectName} added on ${TimetableService.convertDayName(model.classDay)} ${model.startTime}`)
                 res.json(result[0].affectedRows);
             })
             .catch(err => {
