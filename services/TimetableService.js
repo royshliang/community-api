@@ -71,7 +71,6 @@ const TimetableService = {
         model.startTime = model.startTime.toString().split('T')[1]
         model.endTime = model.endTime.toString().split('T')[1]
 
-
         await dbConn.execute(`update timetable set class_day=${model.classDay}, start_time='${model.startTime}', end_time='${model.endTime}', location_id = ${model.locationId}, subject_id = ${model.subjectId} 
                                     where id = ${model.id}`)
             .then(result => {
@@ -120,6 +119,7 @@ const TimetableService = {
                 res.status(500).json(err.message);
             })
     },
+
     convertDayName: function(dayNum) {
         const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
         return dayNames[dayNum - 1]
